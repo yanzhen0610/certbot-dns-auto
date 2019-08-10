@@ -56,12 +56,13 @@ def main():
 
     while process.poll() == None: # while subprocess still running
         line = readline_and_print(process.stdout)
+        stripped_line = line.strip()
         
-        if line.strip() == 'Are you OK with your IP being logged?':
+        if stripped_line == 'Are you OK with your IP being logged?':
             process.stdin.write('Y\n'.encode())
             process.stdin.flush()
 
-        if line.strip() == 'Please deploy a DNS TXT record under the name':
+        if stripped_line == 'Please deploy a DNS TXT record under the name':
             name_line = readline_and_print(process.stdout)
             readline_and_print(process.stdout)
             record_data = readline_and_print(process.stdout).strip()
@@ -87,6 +88,12 @@ def main():
 
             process.stdin.write('\n'.encode())
             process.stdin.flush()
+        
+        if stripped_line == '1: Keep the existing certificate for now':
+            process.stdin.write('1\n'.encode())
+            process.stdin.flush()
+            process.terminate()
+            exit()
 
     for name in record_names:
         dns_down_args = [
