@@ -1,0 +1,4 @@
+.*
+!.gitignore
+dns-up.sh
+dns-down.sh
