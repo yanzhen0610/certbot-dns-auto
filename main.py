@@ -54,7 +54,7 @@ def main():
 
     record_names = set()
 
-    while process.poll() == None: # while subprocess still running
+    while process.poll() is None: # while subprocess still running
         line = readline_and_print(process.stdout)
         stripped_line = line.strip()
         
@@ -80,6 +80,8 @@ def main():
 
             dns_up_return_code = dns_up_process.wait()
             if dns_up_return_code != 0:
+                print_remaining_stdout(process)
+                
                 print('return code != 0')
                 print('exit now')
                 exit(1)
@@ -93,6 +95,9 @@ def main():
             process.stdin.write('1\n'.encode())
             process.stdin.flush()
             process.terminate()
+
+            print_remaining_stdout(process)
+
             exit()
 
     for name in record_names:
@@ -116,6 +121,12 @@ def get_name_from_line(line):
     if isinstance(line, bytes):
         line = line.decode()
     return re.search(r'^(.*) with the following value', line.strip()).group(1)
+
+
+def print_remaining_stdout(process):
+    while process.poll() is None:
+        line = process.stdout.readline()
+        print(line, end='')
 
 
 if __name__ == "__main__":
