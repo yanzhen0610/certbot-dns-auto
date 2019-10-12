@@ -13,20 +13,28 @@ ENV_NAME_EMAIL = 'EMAIL'
 
 WAIT_DNS_UP = 1
 
+CERTBOT_ARG_CERT_ONLY = 'certonly'
+CERTBOT_ARG_WITHOUT_EMAIL = '--register-unsafely-without-email'
+CERTBOT_ARG_PREFERRED_CHALLENGE = '--preferred-challeenge'
+CERTBOT_ARG_DNS = 'dns'
+CERTBOT_ARG_MANUAL = '--manual'
+CERTBOT_ARG_AGREE_TOS = '--agree-tos'
+CERTBOT_ARG_EMAIL = '--email'
+CERTBOT_ARG_DOMAIN = '--domain'
 
 def main():
     certbot_args = [
         'certbot',
-        'certonly',
-        '--preferred-challenge',
-        'dns',
-        '--manual',
-        '--agree-tos',
+        CERTBOT_ARG_CERT_ONLY,
+        CERTBOT_ARG_PREFERRED_CHALLENGE,
+        CERTBOT_ARG_DNS,
+        CERTBOT_ARG_MANUAL,
+        CERTBOT_ARG_AGREE_TOS,
     ] + sys.argv[1:] # extra args
 
     domain = os.environ.get(ENV_NAME_DOMAIN)
     if domain:
-        certbot_args.append('--domain')
+        certbot_args.append(CERTBOT_ARG_DOMAIN)
         certbot_args.append(domain)
     else:
         print('environment variable [{name}] is not defined'.format(name=ENV_NAME_DOMAIN))
@@ -35,12 +43,12 @@ def main():
 
     email = os.environ.get(ENV_NAME_EMAIL)
     if email:
-        certbot_args.append('--email')
+        certbot_args.append(CERTBOT_ARG_EMAIL)
         certbot_args.append(email)
     else:
-        print('environment variable [{name}] is not defined'.format(name=ENV_NAME_DOMAIN))
-        print('use argument "--register-unsafely-without-email"')
-        certbot_args.append('--register-unsafely-without-email')
+        print('environment variable [{name}] is not defined'.format(name=ENV_NAME_EMAIL))
+        print('use argument "{arg}"'.format(arg=CERTBOT_ARG_WITHOUT_EMAIL))
+        certbot_args.append(CERTBOT_ARG_WITHOUT_EMAIL)
 
     print('running certbot with args')
     print(certbot_args)
@@ -125,8 +133,10 @@ def get_name_from_line(line):
 
 def print_remaining_stdout(process):
     while process.poll() is None:
-        line = process.stdout.readline()
-        print(line, end='')
+        for line in process.stdout:
+            if isinstance(line, bytes):
+                line = line.decode()
+            print(line, end='')
 
 
 if __name__ == "__main__":
