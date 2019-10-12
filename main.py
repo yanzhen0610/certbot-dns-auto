@@ -15,7 +15,7 @@ WAIT_DNS_UP = 1
 
 CERTBOT_ARG_CERT_ONLY = 'certonly'
 CERTBOT_ARG_WITHOUT_EMAIL = '--register-unsafely-without-email'
-CERTBOT_ARG_PREFERRED_CHALLENGE = '--preferred-challeenge'
+CERTBOT_ARG_PREFERRED_CHALLENGE = '--preferred-challenge'
 CERTBOT_ARG_DNS = 'dns'
 CERTBOT_ARG_MANUAL = '--manual'
 CERTBOT_ARG_AGREE_TOS = '--agree-tos'
